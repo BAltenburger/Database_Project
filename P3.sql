@@ -5,8 +5,6 @@ Team members:
 - Isabelle Engel: ngs5tf
 */
 
-use master;
-DROP DATABASE Bar;
 CREATE DATABASE Bar;
 GO
 Use Bar;
@@ -141,7 +139,7 @@ CREATE TABLE Employee_Shift(
 );
 
 
-
+--SECTION 2: INSERTING INTO TABLES
 
 INSERT INTO Attendee(attendee_id, attendee_name, attendee_phone_number) VALUES
 (1, 'Jim Ryan','434-456-7890'),
@@ -608,3 +606,26 @@ INSERT INTO EventExpense (event_expense_id, event_id, cost, paid) VALUES
 (28, 28, 5900.00, 4900.00),
 (29, 29, 3400.00, 3000.00),
 (30, 30, 5000.00, 2500.00);
+
+--SECTION 3: QUERIES 
+--1 .EVENTID JOIN with Request
+
+--2. EVENTID JOIN with Reservation
+
+--3. Aggregate: COUNT(ATTENDEES) FOR AN EVENT 
+
+--4. Aggregate MAXIMUM TAB AMOUNT FOR OPEN TAB 
+
+--5. Aggregate: AVERAGE TAB AMOUNT FOR OPEN TAB 
+
+--6. Subquery: Find events where the expense paid is less than the cost (aka still have stuff to pay off)
+
+--7. Subquery: Make sure every event has X number of employees working 
+
+--8. Subquery/join: make sure every event has at least one manager working 
+
+--9. Aggregate: employees who have worked at multiple venues 
+
+--10. Join: events reservation and event times do not match
+
+
