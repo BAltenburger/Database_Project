@@ -4,7 +4,8 @@ Team members:
 - Michelle Tran: txf5ek
 - Isabelle Engel: ngs5tf
 */
-
+USE master;
+DROP DATABASE Bar;
 CREATE DATABASE Bar;
 GO
 Use Bar;
@@ -61,13 +62,12 @@ CREATE TABLE Shift(
 
 CREATE TABLE Tab(
     tab_id INT NOT NULL PRIMARY KEY,
-    is_open BIT, 
-    tab_amount INT,
+    is_open BIT, -- 0 if it is not open, 1 if it is an open bar
+    tab_amount INT, -- tab amount is only if the bar is open, so is_open = 1
     money_spent INT,
     signature_drink VARCHAR(100),
-    CONSTRAINT tab_amount_CHK CHECK (tab_amount >= 100),
-    CONSTRAINT tab_amount_CHK1 CHECK (tab_amount >= money_spent)
-
+    CONSTRAINT tab_amount_CHK CHECK (tab_amount >= 100 OR tab_amount = 0),
+    CONSTRAINT is_open_CHK CHECK (is_open = 0 AND tab_amount = 0 OR is_open <> 0)
 );
 
 CREATE TABLE Contact
@@ -105,8 +105,8 @@ CREATE TABLE EventExpense
     event_id INT NOT NULL,
     Cost DECIMAL(10, 2) NOT NULL,
     Paid DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (event_id) REFERENCES Reservation(event_id), --creating error with insert statement due to the foreign key constraint 
-    CHECK (Paid <= Cost) --does this need to be true? 
+    FOREIGN KEY (event_id) REFERENCES Reservation(event_id), 
+    CHECK (Paid <= Cost) 
 );
 
 --Event_Attendence(AttendeeID, EventID)
@@ -172,6 +172,38 @@ INSERT INTO Attendee(attendee_id, attendee_name, attendee_phone_number) VALUES
 (28, 'Nick Miller',  '968-756-2347'),
 (29, 'Jessica Day', '876-654-8762'),
 (30, 'Winston Schmidt',  '876-342-4367');
+
+INSERT INTO Employee(employee_id, employee_name, is_manager) VALUES
+(1, 'Betsy Altenburger', 0),
+(2, 'Liam Altenburger', 0),
+(3, 'Matthew Altenburger', 1),
+(4, 'Isabelle Engel', 0),
+(5, 'Michelle Tran', 1),
+(6, 'Jim Ryan', 1),
+(7, 'Jane Doe', 1),
+(8, 'Ben', 0),
+(9, 'Carl', 0),
+(10, 'Rory Gilmore', 0),
+(11, 'Lorelai Gilmore', 1),
+(12, 'Emily Gilmore', 0),
+(13, 'Richard Gilmore', 0),
+(14, 'Michael Scott', 0),
+(15, 'Sign Guy', 0),
+(16, 'Jack', 0),
+(17, 'Sabrina Carpenter', 0),
+(18, 'Taylor Swift', 0),
+(19, 'Travis Kelce', 0),
+(20, 'Ella', 0),
+(21, 'Emily', 1),
+(22, 'Kate', 1),
+(23, 'Margot', 0),
+(24, 'Stanley', 1),
+(25, 'Katherine', 0),
+(26, 'Julia', 0),
+(27, 'Chiara', 1),
+(28, 'Kamala Harris', 0),
+(29, 'Julian', 0),
+(30, 'Hudson', 1);
 
 INSERT INTO Shift (shift_id, employee_id, shift_start, shift_end, [date], venue_id) VALUES
 (1, 2, '09:00:00', '12:00:00', '2024-10-14', 1),
@@ -269,6 +301,8 @@ INSERT INTO Venue(venue_id, venue_name, venue_website, total_capacity, street_ad
 (28, 'The Whiskey Jar', 'www.thewhiskeyjarva.com', 100, '4 Downtown Mall', 'Charlottesville', 'VA', 22910),
 (29, 'The Fitzroy', 'www.fitzroy.com', 75, '10 Downtown Mall', 'Charlottesville', 'VA', 22910),
 (30, 'OK Energy House', 'www.okenergy.com/house', 750, '120  Rugby Road', 'Charlottesville', 'VA', 22903);
+
+
 
 --Event Attendence table
 INSERT INTO Event_Attendence(event_id, attendee_id) VALUES 
@@ -382,37 +416,7 @@ INSERT INTO Event_Contact(event_id, contact_id) VALUES
 (24, 25);
 
 
-INSERT INTO Employee(employee_id, employee_name, is_manager) VALUES
-(1, 'Betsy Altenburger', 0),
-(2, 'Liam Altenburger', 0),
-(3, 'Matthew Altenburger', 1),
-(4, 'Isabelle Engel', 0),
-(5, 'Michelle Tran', 1),
-(6, 'Jim Ryan', 1),
-(7, 'Jane Doe', 1),
-(8, 'Ben', 0),
-(9, 'Carl', 0),
-(10, 'Rory Gilmore', 0),
-(11, 'Lorelai Gilmore', 1),
-(12, 'Emily Gilmore', 0),
-(13, 'Richard Gilmore', 0),
-(14, 'Michael Scott', 0),
-(15, 'Sign Guy', 0),
-(16, 'Jack', 0),
-(17, 'Sabrina Carpenter', 0),
-(18, 'Taylor Swift', 0),
-(19, 'Travis Kelce', 0),
-(20, 'Ella', 0),
-(21, 'Emily', 1),
-(22, 'Kate', 1),
-(23, 'Margot', 0),
-(24, 'Stanley', 1),
-(25, 'Katherine', 0),
-(26, 'Julia', 0),
-(27, 'Chiara', 1),
-(28, 'Kamala Harris', 0),
-(29, 'Julian', 0),
-(30, 'Hudson', 1);
+
 
 INSERT INTO Employee_Shift(shift_id, employee_id) VALUES
 (1, 2),
@@ -447,36 +451,36 @@ INSERT INTO Employee_Shift(shift_id, employee_id) VALUES
 (30, 30);
 
 INSERT INTO Tab(tab_id, is_open, tab_amount, money_spent, signature_drink) VALUES
-(1,0,1000,0, 'Bold Rock'),
+(1,0,0,0, 'Bold Rock'),
 (2,1,101,100, 'Whiskey Ginger'),
 (3,1,2000,1000, 'Vokda Cranberry'),
 (4,1,1500,572, 'Ginger Sour'),
 (5,1,1234,0, 'Ranch Water'),
-(6,0,300,100, 'Tequlia Sunrise'),
-(7,0,400,300, 'Cosmo'),
+(6,0,0,100, 'Tequlia Sunrise'),
+(7,0,0,300, 'Cosmo'),
 (8,1,500,500, 'Vodka Soda'),
-(9,0,10000,100, 'Mimosa'),
-(10,0,20000,200, 'Bloody Mary'),
-(11,0,100,50, 'Beer'),
+(9,0,0,100, 'Mimosa'),
+(10,0,0,200, 'Bloody Mary'),
+(11,0,0,50, 'Beer'),
 (12,1,1000,0, 'White Claw'),
 (13,1,1000,0, 'Bold Rock'),
 (14,1,100,100, 'Margarita'),
 (15,1,1000,0, 'Martini with a Twist'),
-(16,0,500,0, 'Espresso Martini'),
-(17,0,500,0, 'Moroccan Mint'),
+(16,0,0,0, 'Espresso Martini'),
+(17,0,0,0, 'Moroccan Mint'),
 (18,1,600,0, 'Old Fashioned'),
-(19,0,1033500, 1295, 'Sangria'),
-(20,0,10000,1035, 'Aperol Spritz'),
-(21,0,3000,243, 'Bourban Lemonade'),
+(19,0,0, 1295, 'Sangria'),
+(20,0,0,1035, 'Aperol Spritz'),
+(21,0,0,243, 'Bourban Lemonade'),
 (22,1,34234,100, 'Manhattan'),
 (23,1,1000,300, 'Mai Tai the Know'),
 (24,1,1500,50, 'Marry Me Mule'),
 (25,1,343,30, 'Martmony Margarite'),
-(26,0,50000,555, 'Wine'),
-(27,0,1243,100, 'Margarita on the Rocks'),
+(26,0,0,555, 'Wine'),
+(27,0,0,100, 'Margarita on the Rocks'),
 (28,1,13500,100, 'Whiskey Sour'),
-(29,0,1000,0, 'Dirty Martini'),
-(30,0,1000,0, 'Lychee Martini');
+(29,0,0,0, 'Dirty Martini'),
+(30,0,0,0, 'Lychee Martini');
 
 INSERT INTO Contact (contact_id, contact_name, email, phone_number) VALUES
 (1, 'Jim Ryan', 'jimryan@virginia.edu', '434-456-7890'),
@@ -575,7 +579,6 @@ INSERT INTO Request (event_id, [status]) VALUES
 (29, 'Approved'),
 (30, 'Pending');
 
-SELECT * FROM EventExpense
 
 INSERT INTO EventExpense (event_expense_id, event_id, cost, paid) VALUES
 (1, 1, 500.00, 250.00),
@@ -611,12 +614,20 @@ INSERT INTO EventExpense (event_expense_id, event_id, cost, paid) VALUES
 
 --SECTION 3: QUERIES 
 --1 .EVENTID JOIN with Request
+SELECT * FROM EVENT e
+    FULL JOIN Request r ON e.event_id = r.event_id;
 
 --2. EVENTID JOIN with Reservation
+SELECT * FROM EVENT e
+    FULL JOIN Reservation r ON e.event_id = r.event_id;
 
 --3. Aggregate: COUNT(ATTENDEES) FOR AN EVENT 
+SELECT COUNT(attendee_id) as total_attendees, event_id FROM Event_Attendence
+    GROUP BY event_id;
 
 --4. Aggregate MAXIMUM TAB AMOUNT FOR OPEN TAB 
+SELECT MAX(tab_amount) as max_tab_for_open_tab FROM Tab
+    WHERE is_open = 1;
 
 --5. Aggregate: AVERAGE OPEN TAB AMOUNT FOR OPEN TAB (checked and runs)
 SELECT AVG(T.tab_amount) AS average_tab
@@ -624,19 +635,18 @@ FROM Tab T
 WHERE T.is_open = 1; 
 
 --6. Subquery: Find events where the expense paid is less than the cost (aka still have stuff to pay off)
---Can not check this due to errors... see comments in Event Expense table creation for details
 
 SELECT E.event_id
 FROM Event E 
 WHERE E.event_id IN (
-    SELECT E.cost
+    SELECT E.event_id
     FROM EventExpense E 
     WHERE E.cost > E.paid 
 )
 
 
 --7. Subquery: Select all events where there are no managers working (checked and runs)
-SELECT EE.event_id
+SELECT DISTINCT EE.event_id
 FROM Event_Employee EE
 WHERE EE.event_id IN (
     SELECT emp.employee_id
@@ -646,14 +656,15 @@ WHERE EE.event_id IN (
 
 --8. Aggregate: identify all event IDs with less than two employees working (checked and runs)
 --Had to add left join so that all event ids that exist are included, even if no relationships in Event_Employee
-SELECT Event.event_id
+SELECT DISTINCT Event.event_id
 FROM Event Event
 LEFT JOIN Event_Employee ON Event.event_id = Event_Employee.event_id 
 GROUP BY Event.event_id 
 HAVING COUNT (Event_Employee.employee_id) < 2; 
 
 
---9. Aggregate: employees who have worked at multiple venues 
+--9. Aggregate: employees who have worked at multiple venues
+ 
 
 --10. Join: events reservation and event times do not match
 
