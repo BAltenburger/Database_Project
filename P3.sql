@@ -663,9 +663,19 @@ GROUP BY Event.event_id
 HAVING COUNT (Event_Employee.employee_id) < 2; 
 
 
---9. Aggregate: employees who have worked at multiple venues
- 
+--9. Aggregate: Number of Reservations per Venue
+SELECT V.venue_name, COUNT(R.event_id) AS total_reservations
+FROM Venue V
+JOIN Reservation R ON V.venue_id = R.venue_id
+GROUP BY V.venue_name;
 
---10. Join: events reservation and event times do not match
+--10. Subquery: Find Events with No Attendees
+SELECT E.event_id
+FROM Event E
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM Event_Attendence EA
+    WHERE EA.event_id = E.event_id
+);
 
 
