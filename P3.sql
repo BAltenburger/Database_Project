@@ -105,8 +105,8 @@ CREATE TABLE EventExpense
     event_id INT NOT NULL,
     Cost DECIMAL(10, 2) NOT NULL,
     Paid DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (event_id) REFERENCES Reservation(event_id),
-    CHECK (Paid <= Cost)
+    FOREIGN KEY (event_id) REFERENCES Reservation(event_id), --creating error with insert statement due to the foreign key constraint 
+    CHECK (Paid <= Cost) --does this need to be true? 
 );
 
 --Event_Attendence(AttendeeID, EventID)
@@ -575,6 +575,8 @@ INSERT INTO Request (event_id, [status]) VALUES
 (29, 'Approved'),
 (30, 'Pending');
 
+SELECT * FROM EventExpense
+
 INSERT INTO EventExpense (event_expense_id, event_id, cost, paid) VALUES
 (1, 1, 500.00, 250.00),
 (2, 2, 1200.00, 800.00),
@@ -616,13 +618,40 @@ INSERT INTO EventExpense (event_expense_id, event_id, cost, paid) VALUES
 
 --4. Aggregate MAXIMUM TAB AMOUNT FOR OPEN TAB 
 
---5. Aggregate: AVERAGE TAB AMOUNT FOR OPEN TAB 
+--5. Aggregate: AVERAGE OPEN TAB AMOUNT FOR OPEN TAB (checked and runs)
+SELECT AVG(T.tab_amount) AS average_tab
+FROM Tab T 
+WHERE T.is_open = 1; 
 
 --6. Subquery: Find events where the expense paid is less than the cost (aka still have stuff to pay off)
+--Can not check this due to errors... see comments in Event Expense table creation for details
 
---7. Subquery: Make sure every event has X number of employees working 
+SELECT E.event_id
+FROM Event E 
+WHERE E.event_id IN (
+    SELECT E.cost
+    FROM EventExpense E 
+    WHERE E.cost > E.paid 
+)
 
---8. Subquery/join: make sure every event has at least one manager working 
+
+--7. Subquery: Select all events where there are no managers working (checked and runs)
+SELECT EE.event_id
+FROM Event_Employee EE
+WHERE EE.event_id IN (
+    SELECT emp.employee_id
+    FROM Employee emp 
+    WHERE emp.is_manager = 0
+); 
+
+--8. Aggregate: identify all event IDs with less than two employees working (checked and runs)
+--Had to add left join so that all event ids that exist are included, even if no relationships in Event_Employee
+SELECT Event.event_id
+FROM Event Event
+LEFT JOIN Event_Employee ON Event.event_id = Event_Employee.event_id 
+GROUP BY Event.event_id 
+HAVING COUNT (Event_Employee.employee_id) < 2; 
+
 
 --9. Aggregate: employees who have worked at multiple venues 
 
