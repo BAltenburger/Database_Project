@@ -48,38 +48,89 @@ BEGIN
 END;
 GO
 
- 
+
+
+-- Functions
+-- 1. Calculate Remaining Tab
+-- To calculate MoneyLeft in a tab (by subtracting MoneySpent from TabAmount) could be used in various queries to see how much is left on the bar tab at any point (returns amount remaining)
+-- This is good because it can be helpful for the bar to let the guests know how much is left. The guest might also want to know how much is left to see if they should get another drink before it runs out
+CREATE FUNCTION  CalculateRemainingTab(
+    @tab_id INT
+)
+    RETURNS INT
+    AS
+    BEGIN
+        DECLARE @remaining_tab INT;
+        SELECT @remaining_tab = tab_amount - money_spent
+        FROM Tab
+        WHERE tab_id = @tab_id;
+        RETURN @remaining_tab;
+END;
+
+
+-- 2. Get Attendees Count for Event
+-- Returns the count of attendees for a specific event by joining Event_Attendence and Attendee tables 
+-- This is good for the security to know how many people should be there. It is also helpful to make sure the event does not go over the venues capacity
+CREATE FUNCTION  GetAttendeeCount(
+    @tab_id INT
+)
+    RETURNS INT
+    AS
+    BEGIN
+        DECLARE @remaining_tab INT;
+        SELECT @remaining_tab = tab_amount - money_spent
+        FROM Tab
+        WHERE tab_id = @tab_id;
+        RETURN @remaining_tab;
+END;
+
+-- 3. Generate Event Expense Report
+-- A procedure that aggregates expenses for an event, summarizing costs
+-- This would be helpful for accounting / financial purposes. The contact who is paying for the event needs this information to know how much to pay.
+-- The venue and the bar also need this information to know how much they are owed.
+CREATE FUNCTION  GetAttendeeCount(
+    @event_id INT
+)
+    RETURNS INT
+    AS
+    BEGIN
+        DECLARE @total_cost INT;
+        SELECT @total_cost = cost + tab_amount
+        FROM EventExpense
+        JOIN Tab ON event_id = event_id
+        WHERE event_id = @event_id;
+        RETURN @remaining_tab;
+END;
+
+
 --Views
 --1. Event Details Overview
 CREATE VIEW vw_EventDetails AS
 SELECT
-E.event_id,
-E.event_start,
-E.event_end,
-C.contact_name,
-C.contact_phone_number,
-V.venue_name, 
-V.street_address + " " + V.city + ", "+ V.state+ " " + V.zip AS venue_address,
-E.attendee_count
-
-FROM [Event] E
-JOIN Contact C ON E.contact_id = C.contact_id
-JOIN Venue V ON E.venue_id = V.venue_id;
-GO
+    E.event_id,
+    E.event_start,
+    E.event_end,
+    C.contact_name,
+    C.phone_number,
+    V.venue_name, 
+    V.street_address + ' ' + V.city + ', ' + V.state + ' ' + V.zip AS venue_address,
+    E.attendee_count
+FROM Event E
+JOIN Contact C ON contact_id = contact_id
+JOIN Venue V ON venue_id = venue_id;
 
 --2. Venue Event Overview
+CREATE VIEW vw_VenueEventOverview AS
 SELECT 
 V.venue_id,
 V.venue_name,
-V.venue_address,
+V.street_address + ' ' + V.city + ', ' + V.state + ' ' + V.zip AS venue_address,
 E.event_id,
 E.event_start,
 E.event_end
 
 FROM Venue V
---i hardcoded this?? not sure if we can take venue_id as a param
-WHERE V.venue_id = 1
-JOIN Employee E ON E.venue_id = V.venue_id;
+JOIN [Event] E ON venue_id = venue_id;
 GO
 
 --3. Manager Shift Summary 
@@ -87,7 +138,7 @@ CREATE VIEW vw_EmployeeShiftSummary AS
 SELECT 
 E.employee_id,
 E.employee_name, 
-E.employee_position,
+E.is_manager,
 --will be manager's ID
 S.shift_id, 
 S.shift_start,
@@ -99,6 +150,37 @@ FROM Employee E
 JOIN Shift S ON E.employee_id = S.employee_id
 JOIN Venue V ON S.venue_id = V.venue_id; 
 GO
+
+
+
+-- Triggers
+-- 1. Trigger if an event Contact is not also registered as an event Attendee
+-- Every contact should be going to the event. This is to make sure if something goes wrong or if a guest is unruly, there is someone there to handle the situation
+CREATE TRIGGER trg_ContactInAttendee
+ON Attendee
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @contact_id INT;
+    DECLARE @event_id INT;
+
+    -- Get the contact_id and event_id from the inserted record
+    SELECT @contact_id = contact_id, @event_id = event_id
+    FROM Event_Contact;
+
+    -- Check if the contact_id exists for the specific event_id in the Attendee table
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM Event_Attendence
+        WHERE attendee_id = @contact_id
+        AND event_id = @event_id
+    )
+    BEGIN
+        -- Raise an error if contact_id is not found for the event_id
+        RAISERROR ('Error: The contact_id does not exist for the given event_id in the Attendee table.', 16, 1);
+    END
+END;
+
 
  -- Implement 1 Column Encryption :- For any 1 column in your table, implement the column encryption for security purposes
 -- Encrypt the email of the contact
@@ -121,8 +203,7 @@ SET email = EncryptByKey(Key_GUID('EmailEncryptionKey'), email);
 -- Close the symmetric key
 CLOSE SYMMETRIC KEY EmailEncryptionKey;
 GO
- 
- 
+
 --Indexes
 -- 1. Event_Attendence with index on attendee_id 
 CREATE NONCLUSTERED INDEX idx_attendee_id ON Event_Attendence(attendee_id);
