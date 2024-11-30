@@ -69,7 +69,7 @@ public class EventController {
     }
 
     @PutMapping("/events/{EventID}")
-    public ResponseEntity<Event> updatePatient(@PathVariable("id") long id, @RequestBody Event event) {
+    public ResponseEntity<Event> updateEvent(@PathVariable("id") long id, @RequestBody Event event) {
         Optional<Event> eventData = eventRepository.findById(id);
 
         if (eventData.isPresent()) {
