@@ -89,7 +89,7 @@ public class EventController {
     }
 
     
-    @DeleteMapping("/Events/{Id}")
+    @DeleteMapping("/events/{Id}")
     public ResponseEntity<HttpStatus> deleteEvent(@PathVariable("id") long id) {
         try {
             eventRepository = tab.deleteById(id);
