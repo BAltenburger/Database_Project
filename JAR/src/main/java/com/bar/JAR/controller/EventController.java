@@ -92,7 +92,7 @@ public class EventController {
     @DeleteMapping("/Events/{Id}")
     public ResponseEntity<HttpStatus> deleteEvent(@PathVariable("id") long id) {
         try {
-            eventRepositoru=y.deleteById(id);
+            eventRepository = tab.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
