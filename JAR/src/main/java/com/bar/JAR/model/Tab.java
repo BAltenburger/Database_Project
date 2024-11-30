@@ -12,7 +12,6 @@ public class Tab {
     @Column(name = "tab_id")
     private long tabID;
     
-//assuming a boolean is fine despite sql not having it?
     @Column(name = "is_open")
     private boolean isOpen;
 

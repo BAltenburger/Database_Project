@@ -60,8 +60,8 @@ public class TabController {
     public ResponseEntity<tab> createTab(@RequestBody Tab tab) {
         try {
             Tab _tab = tabRepository
-                    .save(new tab(tab.gettabId(), tab.gettabStart(), tab.gettabEnd(), tab.gettabRestriction()
-                            ,tab.getContactID(),tab.getVenueID(),tab.getAttendeeCount()));
+                    .save(new tab(tab.getTabID(), tab.getTabAmount(), tab.getMoneySpent(), tab.getMoneyLeft()
+                            ,tab.getSignatureDrink()));
             return new ResponseEntity<>(_tab, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -74,14 +74,11 @@ public class TabController {
 
         if (tabData.isPresent()) {
             Tab _tab = tabData.get();
-            _tab.setFirstName(tab.getFirstName());
-            _tab.setLastName(tab.getLastName());
-            _tab.setDob(tab.getDob());
-            _tab.setStreet(tab.getStreet());
-            _tab.setCity(tab.getCity());
-            _tab.setState(tab.getState());
-            _tab.setZipCode(tab.getZipCode());
-            _tab.setPhoneNo(tab.getPhoneNo());
+            _tab.setTabID(tab.getTabID());
+            _tab.setTabAmount(tab.getTabAmount());
+            _tab.setMoneySpent(tab.getMoneySpent());
+            _tab.setMoneyLeft(tab.getMoneyLeft());
+            _tab.setSignatureDrinik(tab.getSignatureDrink());
             return new ResponseEntity<>(tabRepository.save(_tab), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

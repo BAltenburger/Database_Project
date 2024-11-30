@@ -60,7 +60,7 @@ public class EventController {
     public ResponseEntity<Event> createEvent(@RequestBody Event event) {
         try {
             Event _event = eventRepository
-                    .save(new Event(event.getEventId(), event.getEventStart(), event.getEventEnd(), event.getEventRestriction()
+                    .save(new Event(event.getEventID(), event.getEventStart(), event.getEventEnd(), event.getEventRestriction()
                             ,event.getContactID(),event.getVenueID(),event.getAttendeeCount()));
             return new ResponseEntity<>(_event, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -68,20 +68,20 @@ public class EventController {
         }
     }
 
+
     @PutMapping("/events/{EventID}")
     public ResponseEntity<Event> updateEvent(@PathVariable("id") long id, @RequestBody Event event) {
         Optional<Event> eventData = eventRepository.findById(id);
 
         if (eventData.isPresent()) {
             Event _event = eventData.get();
-            _event.setFirstName(event.getFirstName());
-            _event.setLastName(event.getLastName());
-            _event.setDob(event.getDob());
-            _event.setStreet(event.getStreet());
-            _event.setCity(event.getCity());
-            _event.setState(event.getState());
-            _event.setZipCode(event.getZipCode());
-            _event.setPhoneNo(event.getPhoneNo());
+            _event.setEventID(event.getEventID());
+            _event.setEventStart(event.getEventStart());
+            _event.setEventEnd(event.getEventEnd());
+            _event.setEventRestriction(event.getEventRestriction());
+            _event.setContactID(event.getContactID());
+            _event.setVenueID(event.getVenueID());
+            _event.setAttendeeCount(event.getAttendeeCount());
             return new ResponseEntity<>(eventRepository.save(_event), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

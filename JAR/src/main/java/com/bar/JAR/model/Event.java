@@ -14,13 +14,14 @@ public class Event {
     @Column(name = "event_id")
     private long eventID;
 
+    //researched JSON formatting, etc. for dates to make sure everything works properly
     @Column(name = "event_start")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "UTC")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "EST")
     @Temporal(TemporalType.TIMESTAMP)
     private Date eventStart;
 
     @Column(name = "event_end")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "UTC")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "EST")
     @Temporal(TemporalType.TIMESTAMP)
     private Date eventEnd;
 
