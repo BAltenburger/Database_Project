@@ -8,9 +8,8 @@ import jakarta.persistence.*;
 public class Tab {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tab_id")
-    private long tabID;
+    private int tabID;
     
     @Column(name = "is_open")
     private boolean isOpen;
@@ -27,18 +26,19 @@ public class Tab {
     public Tab() {
     }
 
-    public Tab(boolean isOpen, double tabAmount, double moneySpent, String signatureDrink) {
+    public Tab(int tabID,boolean isOpen, double tabAmount, double moneySpent, String signatureDrink) {
+        this.tabID = tabID;
         this.isOpen = isOpen;
         this.tabAmount = tabAmount;
         this.moneySpent = moneySpent;
         this.signatureDrink = signatureDrink;
     }
 
-    public long getTabID() {
+    public int getTabID() {
         return tabID;
     }
 
-    public void setTabID(long tabID) {
+    public void setTabID(int tabID) {
         this.tabID = tabID;
     }
 

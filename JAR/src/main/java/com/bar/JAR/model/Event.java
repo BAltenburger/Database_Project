@@ -10,9 +10,8 @@ import java.util.Date;
 public class Event {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "event_id")
-    private long eventID;
+    private int eventID;
 
     //researched JSON formatting, etc. for dates to make sure everything works properly
     @Column(name = "event_start")
@@ -28,32 +27,25 @@ public class Event {
     @Column(name = "event_restriction")
     private String eventRestriction;
 
-    @Column(name = "contact_id")
-    private long contactID;
-
-    @Column(name = "venue_id")
-    private long venueID;
-
     @Column(name = "attendee_count")
     private int attendeeCount;
 
     public Event() {
     }
 
-    public Event(Date eventStart, Date eventEnd, String eventRestriction, long contactID, long venueID, int attendeeCount) {
+    public Event(int eventID, Date eventStart, Date eventEnd, String eventRestriction, int attendeeCount) {
+        this.eventID = eventID;
         this.eventStart = eventStart;
         this.eventEnd = eventEnd;
         this.eventRestriction = eventRestriction;
-        this.contactID = contactID;
-        this.venueID = venueID;
         this.attendeeCount = attendeeCount;
     }
 
-    public long getEventID() {
+    public int getEventID() {
         return eventID;
     }
 
-    public void setEventID(long eventID) {
+    public void setEventID(int eventID) {
         this.eventID = eventID;
     }
 
@@ -79,22 +71,6 @@ public class Event {
 
     public void setEventRestriction(String eventRestriction) {
         this.eventRestriction = eventRestriction;
-    }
-
-    public long getContactID() {
-        return contactID;
-    }
-
-    public void setContactID(long contactID) {
-        this.contactID = contactID;
-    }
-
-    public long getVenueID() {
-        return venueID;
-    }
-
-    public void setVenueID(long venueID) {
-        this.venueID = venueID;
     }
 
     public int getAttendeeCount() {

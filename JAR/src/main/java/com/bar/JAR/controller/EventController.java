@@ -26,11 +26,7 @@ public class EventController {
             @RequestParam(required = false) String eventRestriction) {
         try {
             List<Event> events;
-            if (venueID != null) {
-                events = eventRepository.findByVenueID(venueID);
-            } else if (contactID != null) {
-                events = eventRepository.findByContactID(contactID);
-            } else if (eventRestriction != null) {
+            if (eventRestriction != null) {
                 events = eventRepository.findByEventRestriction(eventRestriction);
             } else {
                 events = eventRepository.findAll();
@@ -64,11 +60,10 @@ public class EventController {
     public ResponseEntity<Event> createEvent(@RequestBody Event event) {
         try {
             Event _event = eventRepository.save(new Event(
+                    event.getEventID(),
                     event.getEventStart(),
                     event.getEventEnd(),
                     event.getEventRestriction(),
-                    event.getContactID(),
-                    event.getVenueID(),
                     event.getAttendeeCount()
             ));
             return new ResponseEntity<>(_event, HttpStatus.CREATED);
@@ -87,8 +82,6 @@ public class EventController {
             _event.setEventStart(event.getEventStart());
             _event.setEventEnd(event.getEventEnd());
             _event.setEventRestriction(event.getEventRestriction());
-            _event.setContactID(event.getContactID());
-            _event.setVenueID(event.getVenueID());
             _event.setAttendeeCount(event.getAttendeeCount());
             return new ResponseEntity<>(eventRepository.save(_event), HttpStatus.OK);
         } else {

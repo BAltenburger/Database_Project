@@ -63,6 +63,7 @@ public class TabController {
         try {
             // Create a new Tab and save it
             Tab _tab = tabRepository.save(new Tab(
+                    tab.getTabID(),
                     tab.isOpen(),
                     tab.getTabAmount(),
                     tab.getMoneySpent(),

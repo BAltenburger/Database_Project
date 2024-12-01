@@ -11,9 +11,8 @@ import jakarta.validation.constraints.Pattern;
 public class Contact {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "contact_id")
-  private long contactID;
+  private int contactID;
 
   @Column(name = "contact_name")
   private String contactName;
@@ -29,18 +28,18 @@ private String phoneNumber;
   public Contact() {
   }
 
-  public Contact(long contactID, String contactName, String emailAddress, String phoneNumber) {
+  public Contact(int contactID, String contactName, String emailAddress, String phoneNumber) {
     this.contactID = contactID;
     this.contactName = contactName;
     this.emailAddress = emailAddress;
     this.phoneNumber = phoneNumber;
   }
 
-  public long getContactID() {
+  public int getContactID() {
     return contactID;
   }
   
-  public void setContactID(long contactID) {
+  public void setContactID(int contactID) {
     this.contactID = contactID;
   }
 

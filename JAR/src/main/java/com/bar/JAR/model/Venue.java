@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "Venue")
 public class Venue {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "venue_id")
     private int venue_id;
 
@@ -19,20 +19,23 @@ public class Venue {
     @Column(name = "total_capacity")
     private int total_capacity;
 
+
     @Column(name = "street_address")
     private String street_address;
+
 
     @Column(name = "city")
     private String city;
 
+
     @Column(name = "state")
     private String state;
+
 
     @Column(name = "zip")
     private int zip;
 
-    public Venue(){
-
+    public Venue() {
     }
 
     public Venue(int venue_id, String venue_name, String venue_website, int total_capacity, String street_address, String city, String state, int zip) {
@@ -113,3 +116,4 @@ public class Venue {
 
 
 }
+

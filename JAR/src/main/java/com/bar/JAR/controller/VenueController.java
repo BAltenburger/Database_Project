@@ -30,12 +30,16 @@ public class VenueController {
         return venue.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Create a new venue (POST)
     @PostMapping
-    public ResponseEntity<Venue> createVenue(@RequestBody Venue venue) {
-        Venue savedVenue = venueRepository.save(venue);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedVenue);
-    }
+public ResponseEntity<Venue> createVenue(@RequestBody Venue venue) {
+    System.out.println("Venue Name: " + venue.getVenueName());
+    System.out.println("Venue Website: " + venue.getVenueWebsite());
+    System.out.println("Total Capacity: " + venue.getTotalCapacity());
+    System.out.println("Venue Id: " + venue.getVenueId());
+    // Add more logging for other fields
+    Venue savedVenue = venueRepository.save(venue);
+    return ResponseEntity.status(HttpStatus.CREATED).body(savedVenue);
+}
 
     // Update an existing venue (PUT)
     @PutMapping("/{id}")
