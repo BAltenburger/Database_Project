@@ -1,19 +1,12 @@
-/** packages and imports should be updated */
+package com.bar.JAR.controller;
 
-package main.java.com.bar.JAR.controller;
-
-
-import main.java.com.bar.JAR.model.Event;
-import main.java.com.bar.JAR.repository.EventRepository;
-import org.springframework.web.bind.annotation.RequestMapping;
+import com.bar.JAR.model.Event;
+import com.bar.JAR.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,17 +16,25 @@ import java.util.Optional;
 public class EventController {
 
     @Autowired
-    EventRepository eventRepository;
+    private EventRepository eventRepository;
 
+    // GET all events or filter by venue ID or contact ID
     @GetMapping("/events")
-    public ResponseEntity<List<Event>> getAllEvents(@RequestParam(required = false) String eventID) {
+    public ResponseEntity<List<Event>> getAllEvents(
+            @RequestParam(required = false) Long venueID,
+            @RequestParam(required = false) Long contactID,
+            @RequestParam(required = false) String eventRestriction) {
         try {
-            List<Event> events = new ArrayList<Event>();
-
-            if (eventID == null)
-                eventRepository.findAll().forEach(events::add);
-            else
-                eventRepository.findByEventID(eventID).forEach(events::add);
+            List<Event> events;
+            if (venueID != null) {
+                events = eventRepository.findByVenueID(venueID);
+            } else if (contactID != null) {
+                events = eventRepository.findByContactID(contactID);
+            } else if (eventRestriction != null) {
+                events = eventRepository.findByEventRestriction(eventRestriction);
+            } else {
+                events = eventRepository.findAll();
+            }
 
             if (events.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -41,41 +42,48 @@ public class EventController {
 
             return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/events/{Id}")
-    public ResponseEntity<Event> getEventById(@PathVariable("Id") long id) {
-        Optional<Event> eventData = eventRepository.findById(id);
+    // GET an event by ID
+    @GetMapping("/events/{eventID}")
+    public ResponseEntity<Event> getEventById(@PathVariable("eventID") long eventID) {
+        Optional<Event> eventData = eventRepository.findById(eventID);
 
         if (eventData.isPresent()) {
             return new ResponseEntity<>(eventData.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    } 
+    }
 
+    // POST a new event
+    @SuppressWarnings("null")
     @PostMapping("/events")
     public ResponseEntity<Event> createEvent(@RequestBody Event event) {
         try {
-            Event _event = eventRepository
-                    .save(new Event(event.getEventID(), event.getEventStart(), event.getEventEnd(), event.getEventRestriction()
-                            ,event.getContactID(),event.getVenueID(),event.getAttendeeCount()));
+            Event _event = eventRepository.save(new Event(
+                    event.getEventStart(),
+                    event.getEventEnd(),
+                    event.getEventRestriction(),
+                    event.getContactID(),
+                    event.getVenueID(),
+                    event.getAttendeeCount()
+            ));
             return new ResponseEntity<>(_event, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-
-    @PutMapping("/events/{EventID}")
-    public ResponseEntity<Event> updateEvent(@PathVariable("id") long id, @RequestBody Event event) {
-        Optional<Event> eventData = eventRepository.findById(id);
+    // PUT update an event by ID
+    @PutMapping("/events/{eventID}")
+    public ResponseEntity<Event> updateEvent(@PathVariable("eventID") long eventID, @RequestBody Event event) {
+        Optional<Event> eventData = eventRepository.findById(eventID);
 
         if (eventData.isPresent()) {
             Event _event = eventData.get();
-            _event.setEventID(event.getEventID());
             _event.setEventStart(event.getEventStart());
             _event.setEventEnd(event.getEventEnd());
             _event.setEventRestriction(event.getEventRestriction());
@@ -88,17 +96,18 @@ public class EventController {
         }
     }
 
-    
-    @DeleteMapping("/events/{Id}")
-    public ResponseEntity<HttpStatus> deleteEvent(@PathVariable("id") long id) {
+    // DELETE an event by ID
+    @DeleteMapping("/events/{eventID}")
+    public ResponseEntity<HttpStatus> deleteEvent(@PathVariable("eventID") long eventID) {
         try {
-            eventRepository = tab.deleteById(id);
+            eventRepository.deleteById(eventID);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    // DELETE all events
     @DeleteMapping("/events")
     public ResponseEntity<HttpStatus> deleteAllEvents() {
         try {
@@ -107,8 +116,5 @@ public class EventController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
-
-
 }
