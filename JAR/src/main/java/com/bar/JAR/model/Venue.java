@@ -102,11 +102,11 @@ public class Venue {
         this.state = state;
     }
 
-    public long getZip() {
+    public int getZip() {
         return zip;
     }
 
-    public void setZipCode(int zip) {
+    public void setZip(int zip) {
         this.zip = zip;
     }
 

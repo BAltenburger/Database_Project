@@ -1,108 +1,74 @@
 package com.bar.JAR.controller;
 
-
-import org.springframework.web.bind.annotation.RequestMapping;
+import com.bar.JAR.model.Venue;
+import com.bar.JAR.repository.VenueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/venues")
 public class VenueController {
 
     @Autowired
+    private VenueRepository venueRepository;
 
-    @GetMapping("/patients")
-    public ResponseEntity<List<Venue>> getAllPatients(@RequestParam(required = false) String firstName) {
-        try {
-            List<Patient> patients = new ArrayList<Patient>();
-
-            if (firstName == null)
-                patientRepository.findAll().forEach(patients::add);
-            else
-                patientRepository.findByFirstNameContaining(firstName).forEach(patients::add);
-
-            if (patients.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-
-            return new ResponseEntity<>(patients, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    // Get all venues
+    @GetMapping
+    public List<Venue> getAllVenues() {
+        return venueRepository.findAll();
     }
 
-    @GetMapping("/patients/{id}")
-    public ResponseEntity<Patient> getPatientById(@PathVariable("id") long id) {
-        Optional<Patient> patientData = patientRepository.findById(id);
+    // Get venue by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Venue> getVenueById(@PathVariable("id") int id) {
+        Optional<Venue> venue = venueRepository.findById(id);
+        return venue.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
-        if (patientData.isPresent()) {
-            return new ResponseEntity<>(patientData.get(), HttpStatus.OK);
+    // Create a new venue (POST)
+    @PostMapping
+    public ResponseEntity<Venue> createVenue(@RequestBody Venue venue) {
+        Venue savedVenue = venueRepository.save(venue);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedVenue);
+    }
+
+    // Update an existing venue (PUT)
+    @PutMapping("/{id}")
+    public ResponseEntity<Venue> updateVenue(@PathVariable("id") int id, @RequestBody Venue venueDetails) {
+        Optional<Venue> existingVenue = venueRepository.findById(id);
+
+        if (existingVenue.isPresent()) {
+            Venue venueToUpdate = existingVenue.get();
+            venueToUpdate.setVenueName(venueDetails.getVenueName());
+            venueToUpdate.setVenueWebsite(venueDetails.getVenueWebsite());
+            venueToUpdate.setTotalCapacity(venueDetails.getTotalCapacity());
+            venueToUpdate.setStreetAddress(venueDetails.getStreetAddress());
+            venueToUpdate.setCity(venueDetails.getCity());
+            venueToUpdate.setState(venueDetails.getState());
+            venueToUpdate.setZip(venueDetails.getZip());
+
+            Venue updatedVenue = venueRepository.save(venueToUpdate);
+            return ResponseEntity.ok(updatedVenue);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 
-    @PostMapping("/patients")
-    public ResponseEntity<Patient> createPatient(@RequestBody Patient patient) {
-        try {
-            Patient _patient = patientRepository
-                    .save(new Patient(patient.getFirstName(), patient.getLastName(), patient.getDob(), patient.getStreet()
-                            ,patient.getCity(),patient.getState(),patient.getZipCode(),patient.getPhoneNo(),patient.getEmailAddress()));
-            return new ResponseEntity<>(_patient, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+    // Delete venue by ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteVenue(@PathVariable("id") int id) {
+        Optional<Venue> venue = venueRepository.findById(id);
 
-    @PutMapping("/patients/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable("id") long id, @RequestBody Patient patient) {
-        Optional<Patient> patientData = patientRepository.findById(id);
-
-        if (patientData.isPresent()) {
-            Patient _patient= patientData.get();
-            _patient.setFirstName(patient.getFirstName());
-            _patient.setLastName(patient.getLastName());
-            _patient.setDob(patient.getDob());
-            _patient.setStreet(patient.getStreet());
-            _patient.setCity(patient.getCity());
-            _patient.setState(patient.getState());
-            _patient.setZipCode(patient.getZipCode());
-            _patient.setPhoneNo(patient.getPhoneNo());
-            return new ResponseEntity<>(patientRepository.save(_patient), HttpStatus.OK);
+        if (venue.isPresent()) {
+            venueRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
-
-    @DeleteMapping("/patients/{id}")
-    public ResponseEntity<HttpStatus> deletePatient(@PathVariable("id") long id) {
-        try {
-            patientRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @DeleteMapping("/patients")
-    public ResponseEntity<HttpStatus> deleteAllPatients() {
-        try {
-            patientRepository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-    }
-
-
 }
