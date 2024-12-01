@@ -21,20 +21,16 @@ public class Tab {
     @Column(name = "money_spent")
     private double moneySpent;
 
-    @Column(name = "money_left")
-    private double moneyLeft;
-
     @Column(name = "signature_drink")
     private String signatureDrink;
 
     public Tab() {
     }
 
-    public Tab(boolean isOpen, double tabAmount, double moneySpent, double moneyLeft, String signatureDrink) {
+    public Tab(boolean isOpen, double tabAmount, double moneySpent, String signatureDrink) {
         this.isOpen = isOpen;
         this.tabAmount = tabAmount;
         this.moneySpent = moneySpent;
-        this.moneyLeft = moneyLeft;
         this.signatureDrink = signatureDrink;
     }
 
@@ -68,14 +64,6 @@ public class Tab {
 
     public void setMoneySpent(double moneySpent) {
         this.moneySpent = moneySpent;
-    }
-
-    public double getMoneyLeft() {
-        return moneyLeft;
-    }
-
-    public void setMoneyLeft(double moneyLeft) {
-        this.moneyLeft = moneyLeft;
     }
 
     public String getSignatureDrink() {
