@@ -100,16 +100,6 @@ public class AttendeeController {
         }
     }
 
-    // DELETE all attendees
-    @DeleteMapping("/attendees")
-    public ResponseEntity<HttpStatus> deleteAllAttendees() {
-        try {
-            attendeeRepository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
     // Helper method to validate phone number format (xxx-xxx-xxxx)
     private boolean isValidPhoneNumber(String phoneNumber) {

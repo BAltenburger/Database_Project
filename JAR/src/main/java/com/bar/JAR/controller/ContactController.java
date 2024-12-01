@@ -90,17 +90,6 @@ public class ContactController {
         }
     }
 
-    // DELETE all contacts
-    @DeleteMapping("/contacts")
-    public ResponseEntity<HttpStatus> deleteAllContacts() {
-        try {
-            contactRepository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     // GET contact by email address
     @GetMapping("/contacts/email/{emailAddress}")
     public ResponseEntity<Contact> getContactByEmail(@PathVariable("emailAddress") String emailAddress) {

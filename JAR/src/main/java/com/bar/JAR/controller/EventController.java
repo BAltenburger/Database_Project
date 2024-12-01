@@ -107,14 +107,4 @@ public class EventController {
         }
     }
 
-    // DELETE all events
-    @DeleteMapping("/events")
-    public ResponseEntity<HttpStatus> deleteAllEvents() {
-        try {
-            eventRepository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }

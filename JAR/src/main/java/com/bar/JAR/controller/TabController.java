@@ -103,14 +103,4 @@ public class TabController {
         }
     }
 
-    // Delete all tabs
-    @DeleteMapping("/tabs")
-    public ResponseEntity<HttpStatus> deleteAllTabs() {
-        try {
-            tabRepository.deleteAll(); // Correctly delete all records
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }
