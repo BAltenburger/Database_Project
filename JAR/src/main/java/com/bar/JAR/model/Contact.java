@@ -29,7 +29,7 @@ private String phoneNumber;
   public Contact() {
   }
 
-  public Contact(long ContactID, String contactName, String emailAddress, String phoneNumber) {
+  public Contact(long contactID, String contactName, String emailAddress, String phoneNumber) {
     this.contactID = contactID;
     this.contactName = contactName;
     this.emailAddress = emailAddress;
