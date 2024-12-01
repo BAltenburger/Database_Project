@@ -2,20 +2,9 @@ package com.bar.JAR.model;
 
 import jakarta.persistence.*;
 
-
 @Entity
 @Table(name = "Venue")
 public class Venue {
-    // CREATE TABLE Venue(
-    //     venue_id INT PRIMARY KEY,
-    //     venue_name VARCHAR(50),
-    //     venue_website VARCHAR(50),
-    //     total_capacity INT,
-    //     street_address VARCHAR(100),
-    //     city VARCHAR(30),
-    //     [state] VARCHAR(5),
-    //     zip INT
-    // );
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "venue_id")

@@ -1,9 +1,10 @@
 /** Model for Contact **/
-package main.java.com.bar.JAR.model;
+package com.bar.JAR.model;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
+
 
 @Entity
 @Table(name = "contact")

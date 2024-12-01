@@ -1,5 +1,5 @@
 /** Model for Tab **/
-package main.java.com.bar.JAR.model;
+package com.bar.JAR.model;
 
 import jakarta.persistence.*;
 
