@@ -1,5 +1,5 @@
 /** Model for Event **/
-package main.java.com.bar.JAR.model;
+package com.bar.JAR.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
